@@ -1,4 +1,4 @@
-# pro-midi-visualizer
+# Pro MIDI Visualizer
 The pro-midi-visualizer in the github
 
 ## Demo
