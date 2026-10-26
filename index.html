@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro MIDI Visualizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <h3>Video Export Settings</h3>
+            <div class="export-field">
+                <label>Resolution</label>
+                <select id="export-res">
+                    <option value="1280x720">720p (HD)</option>
+                    <option value="1920x1080" selected>1080p (FHD)</option>
+                    <option value="2560x1440">1440p (QHD)</option>
+                    <option value="3840x2160">4K (UHD)</option>
+                </select>
+            </div>
+            <div class="export-field">
+                <label>Frame Rate</label>
+                <select id="export-fps">
+                    <option value="30">30 FPS</option>
+                    <option value="60" selected>60 FPS</option>
+                </select>
+            </div>
+            <div class="export-field">
+                <label class="export-checkbox"><input type="checkbox" id="export-audio" checked> Include Audio</label>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn">Close</button>
+                <button id="export-start-btn" class="primary">Start Render</button>
+            </div>
+        </div>
+    </div>
 
+    <div id="export-status-overlay" style="display: none;">
+        <div class="export-status-box">
+            <div class="recording-dot"></div>
+            <div class="status-info">
+                <div class="status-title">RENDERING VIDEO...</div>
+                <div class="status-progress-container">
+                    <div id="export-progress-bar"></div>
+                </div>
+                <div id="export-progress-text">0%</div>
+            </div>
+            <button id="export-cancel-btn">Cancel</button>
+        </div>
+    </div>
+
+    <div id="fps-counter">0 FPS</div>
+    <div id="stats-container">
+        <div id="note-counter">0 / 0 notes</div>
+        <div id="nps-counter">0 NPS</div>
+        <div id="bpm-counter">0 BPM</div>
+        <div id="draw-counter">0 Rects</div>
+        <div id="active-voices" style="background: rgba(0, 0, 0, 0.5); padding: 5px 10px; border-radius: 4px; font-family: monospace; font-size: 10px; color: #9b59b6; text-align: right; display: block;">0 Voices</div>
+    </div>
+    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); color: white; font-family: sans-serif;">
+        <div id="loading-text" style="font-size: 24px; margin-bottom: 10px;">Processing MIDI...</div>
+        <div id="loading-subtext" style="font-size: 14px; color: #888; margin-bottom: 20px;">Please wait...</div>
+        <div style="width: 260px; height: 10px; background: #333; border-radius: 5px; overflow: hidden;">
+            <div id="load-progress" style="width: 0%; height: 100%; background: #2ecc71; transition: width 0.1s;"></div>
+        </div>
+    </div>
+    <div id="ui-overlay">
+        <div class="controls">
+            <button id="play-btn" disabled>Loading...</button>
+            <input type="file" id="file-input" accept=".mid,.midi" style="display: none;">
+            <button id="upload-btn">Open MIDI</button>
+            <button id="video-export-open-btn" disabled>Video Export</button>
+            <select id="render-mode-select">
+                <option value="time">Time-based</option>
+                <option value="fake-tick">Fake Tick-based</option>
+                <option value="real-tick">Real Tick-based</option>
+            </select>
+            <select id="render-quality-select">
+                <option value="unnecessary">Render: Unnecessarily Optimized</option>
+                <option value="optimized" selected>Render: Optimized</option>
+                <option value="strict">Render: Strict</option>
+                <option value="absurd">Render: Absurd</option>
+            </select>
+            <select id="audio-mode-select">
+                <option value="realtime" selected>Audio: Real-time</option>
+                <option value="prerendered">Audio: Chunked Prerender</option>
+                <option value="full-rendered">Audio: Full Rendered</option>
+            </select>
+            <select id="midi-out-select">
+                <option value="internal" selected>Internal Synth</option>
+            </select>
+            <select id="color-mode-select">
+                <option value="track" selected>Color: Track</option>
+                <option value="channel">Color: Channel</option>
+                <option value="note">Color: Note</option>
+                <option value="velocity">Color: Velocity</option>
+                <option value="octave">Color: Octave</option>
+                <option value="track-channel">Color: Track+Chan</option>
+            </select>
+            <select id="key-layout-select">
+                <option value="88">88-key</option>
+                <option value="128" selected>128-key</option>
+                <option value="256">256-key</option>
+                <option value="512">512-key</option>
+            </select>
+            <div class="info">
+                <span id="filename">No file loaded</span>
+                <span id="status">Ready</span>
+            </div>
+        </div>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div id="drop-zone">
+        <div class="drop-message">Drop MIDI File Here</div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
